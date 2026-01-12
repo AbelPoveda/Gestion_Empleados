@@ -1,6 +1,7 @@
 ﻿using Gestion_Empleados.DTOs;
 using Gestion_Empleados.Interfaces;
 using Gestion_Empleados.Models;
+using Gestion_Empleados.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,9 +30,22 @@ namespace Gestion_Empleados.Controllers
 
         // GET: api/empleados/id
         [HttpGet("{id}")]
-        public async Task<ActionResult<Empleado>> GetById(int id)
+        public async Task<ActionResult<EmpleadoResponseDto>> GetById(int id, [FromServices] NetoService _servicioSueldo)
         {
             var empleado = await _repository.GetByIdAsync(id);
+            if (empleado == null) return NotFound();
+
+            var respuesta = new EmpleadoResponseDto
+            {
+                Id = empleado.Id,
+                Nombre = empleado.Nombre,
+                Puesto = empleado.Puesto,
+                SalarioBruto = empleado.Salario,
+                SalarioNetoMensual = _servicioSueldo.CalcularSueldoNetoMensual(empleado.Salario)
+            };
+
+            return Ok(respuesta);
+
             if (empleado == null) return NotFound();
 
             return Ok(empleado);

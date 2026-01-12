@@ -1,6 +1,7 @@
 using Gestion_Empleados.Data;
 using Gestion_Empleados.Interfaces;
 using Gestion_Empleados.Options;
+using Gestion_Empleados.Services;
 using GestionDeEmpleados.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Redirecciona llamadas a la interfaz hacia el repositorio
 builder.Services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
+
+builder.Services.AddScoped<NetoService>();
 
 // JWT
 var jwtSection = builder.Configuration.GetSection("Jwt");
