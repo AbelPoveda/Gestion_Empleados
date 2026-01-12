@@ -1,4 +1,7 @@
 <Solution>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
   <Project Path="Gestion_Empleados/Gestion_Empleados.csproj" />
   <Project Path="Gestión_Empleados.Tests/Gestión_Empleados.Tests.csproj" Id="b03b17af-0987-404a-8ef5-bcd3752d8311" />
 </Solution>
