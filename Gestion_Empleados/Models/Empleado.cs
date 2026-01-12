@@ -11,6 +11,5 @@ namespace Gestion_Empleados.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Salario { get; set; }
         public DateTime FechaContratacion { get; set; }
-
     }
 }

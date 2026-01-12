@@ -1,10 +1,12 @@
 ﻿using Gestion_Empleados.DTOs;
 using Gestion_Empleados.Interfaces;
 using Gestion_Empleados.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gestion_Empleados.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EmpleadosController : ControllerBase
