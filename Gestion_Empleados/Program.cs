@@ -6,14 +6,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using Serilog;
 using System.Text;
+
+// Serilog
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 3)
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -46,9 +52,13 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
+// /health
+builder.Services.AddHealthChecks()
+    .AddCheck("self", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy());
+
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -62,20 +72,26 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapHealthChecks("/health");
+
+
+// Auto migración
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
 
         // Update-Database automáticamente al arrancar
         context.Database.Migrate();
-        Console.WriteLine("--> Base de datos migrada con éxito.");
+        logger.LogInformation("Base de datos migrada con éxito a las {Time}.", DateTime.Now);
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"--> Error al migrar la base de datos: {ex.Message}");
+        logger.LogError(ex, "Error al migrar la base de datos.");
     }
 }
 

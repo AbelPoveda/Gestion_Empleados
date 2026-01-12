@@ -9,7 +9,7 @@ namespace Gestion_Empleados.Data
         {
         }
 
-        // Crea una tabla llamada Empleados basada en la clase Empleado
+        // Crea una tabla Empleados basada en Empleado
         public DbSet<Empleado> Empleados { get; set; }
     }
 }
